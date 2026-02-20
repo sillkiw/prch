@@ -615,13 +615,35 @@
             <!-- 9. Модель – метрика, валидация, сравнение       -->
             <!-- ============================================== -->
 
-            <section>
-                    <h2> Целевая метрика и валидация</h2>
-                    <p>Цель: \( y = \log(1 + calls\_daily) \) (лог-трансформация)</p>
-                    <p>Метрика: RMSE в лог-шкале. Baseline (среднее) = 0,406</p>
-                    <p>Валидация: <span class="accent">GroupKFold (5 фолдов)</span> по географическим кластерам – предотвращение пространственной утечки</p>
-                </section>
-            <section>
+        <section>
+    <h2 style="text-align: center; margin-bottom: 1rem;">Целевая метрика и валидация</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <!-- Карточка 1: Целевая переменная -->
+        <div class="card" style="padding: 1.2rem;">
+            <div class="card-title" style="font-size: 1.2rem;">
+             Целевая переменная
+            </div>
+            <p style="font-size: 1rem; margin: 0.5rem 0;">\( y = \log(1 + \text{calls\_daily}) \)</p>
+            <p style="font-size: 0.9rem; line-height: 1.4;">Логарифмическое преобразование применено из-за сильной правосторонней асимметрии распределения <code>calls_daily</code>. Оно делает распределение более симметричным, приближая его к нормальному, что повышает устойчивость моделей.</p>
+        </div>
+        <!-- Карточка 2: Метрика -->
+        <div class="card" style="padding: 1.2rem;">
+            <div class="card-title" style="font-size: 1.2rem;">
+            Метрика
+            </div>
+            <p style="font-size: 1rem; margin: 0.5rem 0;"><strong>RMSE</strong> в лог-шкале</p>
+            <p style="font-size: 0.9rem; line-height: 1.4;">Ошибка измеряется на преобразованном таргете, чтобы избежать доминирования редких высоких значений. <strong>Baseline</strong> (предсказание среднего по обучающей выборке) составляет <span class="accent">0,406</span>. Все модели сравниваются с этим уровнем.</p>
+        </div>
+    </div>
+    <!-- Карточка 3: Валидация (на всю ширину) -->
+    <div class="card" style="padding: 1.2rem;">
+        <div class="card-title" style="font-size: 1.2rem;">
+        Валидация (GroupKFold)
+        </div>
+        <p style="font-size: 0.95rem; line-height: 1.5;">Обычная случайная разбивка (KFold) неприменима из-за <strong>пространственной автокорреляции</strong>: близкие квадраты статистически похожи. Если они попадут и в обучающую, и в тестовую выборки, модель «подсмотрит» соседей, и оценка качества будет завышенной.</p>
+        <p style="font-size: 0.95rem; line-height: 1.5; margin-top: 0.5rem;">Используется <span class="accent">GroupKFold (5 фолдов)</span> – разбиение по географическим кластерам (<code>cluster_geo_k10</code>). Целые кластеры уходят в тест, что имитирует применение модели на новых, незнакомых районах и даёт честную оценку обобщающей способности.</p>
+    </div>
+</section>
                
                 <section>
                     <h3>Сравнение моделей (RMSE log1p)</h3>
@@ -694,14 +716,6 @@
                             <li>OpenStreetMap contributors. planet.osm.org.</li>
                         </ul>
                     </div>
-                </section>
-                <section>
-                    <h2> Благодарности</h2>
-                    <p>OpenStreetMap contributors, библиотекам:</p>
-                    <p><i class="fas fa-code"></i> scikit-learn, numpy, pandas, matplotlib</p>
-                    <p><i class="fas fa-chart-line"></i> reveal.js, KaTeX, Font Awesome</p>
-                    <hr style="width:30%; margin:1em auto;">
-                    <p>Иван Петров, группа ММ-21<br>Москва, 2026</p>
                 </section>
             </section>
         </div> <!-- slides -->
